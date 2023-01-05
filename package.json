@@ -1,0 +1,30 @@
+{
+  "name": "hvrdb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && npm run serve",
+    "serve": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shahar-Y/hvrDB.git"
+  },
+  "author": "Shahar Yair",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shahar-Y/hvrDB/issues"
+  },
+  "homepage": "https://github.com/Shahar-Y/hvrDB#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.18"
+  },
+  "dependencies": {
+    "csv": "^6.2.5",
+    "csv-writer": "^1.6.0",
+    "fs": "0.0.1-security",
+    "typescript": "^4.9.4"
+  }
+}
