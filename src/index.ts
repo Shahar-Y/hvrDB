@@ -1,6 +1,5 @@
 import * as csv from "csv-writer";
 import * as fs from "fs";
-
 import {
   kevaWriterArray,
   teamimWriterArray,
@@ -57,7 +56,7 @@ function main() {
 
   let kevaStoresCounter = 0;
 
-  // enrich kevaStoresDictionary with general corp info
+  // Enrich kevaStoresDictionary with general corp info
   for (let key in kevaStoresDictionary) {
     kevaStoresCounter += kevaStoresDictionary[key].length;
     let corpStores = kevaStoresDictionary[key];
@@ -131,6 +130,7 @@ function main() {
 function correctDuplicateStores(
   storesArray: KevaStoreInfo[] | TeamimStoreInfo[]
 ) {
+  let ctr = 0;
   for (let i = 0; i < storesArray.length - 1; i++) {
     let store = storesArray[i];
     for (let j = i + 1; j < storesArray.length; j++) {
@@ -144,21 +144,23 @@ function correctDuplicateStores(
         store2.latitude === store.latitude &&
         store2.longitude === store.longitude
       ) {
+        ctr += 1;
+        const MIL = 1000000;
         let rand = Math.random() * 2 - 1;
         storesArray[j].latitude = (
-          +storesArray[j].latitude +
-          0.0001 * rand
+          Math.round((+storesArray[j].latitude + 0.0002 * rand) * MIL) / MIL
         ).toString();
         storesArray[j].longitude = (
-          +storesArray[j].longitude +
-          0.0001 * rand
+          Math.round((+storesArray[j].longitude + 0.0002 * rand) * MIL) / MIL
         ).toString();
+
         console.log(
           `Duplicate store: ${storesArray[i].latitude}, ${storesArray[i].longitude} - ${storesArray[j].latitude}, ${storesArray[j].longitude}`
         );
       }
     }
   }
+  console.log(`Fixed ${ctr} duplicate stores`);
   return storesArray;
 }
 
