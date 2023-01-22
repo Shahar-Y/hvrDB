@@ -1,9 +1,9 @@
 // https://www.hvr.co.il/bs2/datasets/teamimcard_branches.json
 import branches from "./hvrDB/teamimcard_branches.json";
 
-type StoreInfo = typeof branches.branch[0];
+type TeamimStoreInfo = typeof branches.branch[0];
 
-const teamimStores: StoreInfo[] = branches.branch;
+let teamimStores: TeamimStoreInfo[] = branches.branch;
 
 // https://www.hvr.co.il/bs2/datasets/giftcard_branches.json
 import * as kevaStoresJson from "./hvrDB/giftcard_branches.json";
@@ -18,6 +18,8 @@ import * as kevaGeneralCorpsJson from "./hvrDB/giftcard.json";
 type KevaCorpsInfo = typeof kevaGeneralCorpsJson.corps[0];
 
 const kevaGeneralCorpsArray: KevaCorpsInfo[] = kevaGeneralCorpsJson.corps;
+
+// green: https://www.mcc.co.il/bs2/datasets/mcccard.json
 
 // enriched data from the store and the company
 let kevaWriterArray = [
@@ -56,7 +58,7 @@ let teamimWriterArray = [
 export {
   KevaStoreInfo,
   KevaCorpsInfo,
-  StoreInfo,
+  TeamimStoreInfo,
   kevaWriterArray,
   teamimWriterArray,
   kevaStoresDictionary,
