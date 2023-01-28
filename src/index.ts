@@ -13,6 +13,7 @@ import {
   mcccardCorpsInfo,
   mcccardBranchesDictionary,
   mcccardCorpsArray,
+  mccWriterArray,
 } from "./types";
 
 const OUTPUD_DIR_PATH = "./output";
@@ -40,6 +41,16 @@ const csvWriterKeva2 = createCsvWriter({
   header: kevaWriterArray,
 });
 
+const csvWriterMcc1 = createCsvWriter({
+  path: OUTPUD_DIR_PATH + "/mcc1.csv",
+  header: mccWriterArray,
+});
+
+const csvWriterMcc2 = createCsvWriter({
+  path: OUTPUD_DIR_PATH + "/mcc2.csv",
+  header: mccWriterArray,
+});
+
 function main() {
   console.log("Start running script");
 
@@ -51,28 +62,75 @@ function main() {
 
   csvWriterTeamim
     .writeRecords(fixedTeamimStores)
-    .then(() => console.log("The Teamim CSV file was written successfully"));
+    .then(() =>
+      console.log(
+        `Teamim file was written successfully with ${fixedTeamimStores.length} records`
+      )
+    );
 
   // ****************************************************************
-  // ***************************** Keva *****************************
+  // *********************** Giftcard and MCC ***********************
   // ****************************************************************
 
-  // TODO: add mcc to output
+  let kevaStores: (Partial<giftcardBranchInfo> &
+    Partial<giftcardCorpsInfo>)[][] = manageStoresData(
+    giftcardBranchesDictionary,
+    giftcardCorpsArray
+  );
 
-  let kevaStores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[] =
-    [];
+  let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] =
+    manageStoresData(mcccardBranchesDictionary, mcccardCorpsArray);
 
-  let kevaStoresCounter = 0;
+  csvWriterKeva1
+    .writeRecords(kevaStores[0])
+    .then(() =>
+      console.log(
+        `The Keva 1 CSV file was written successfully with ${kevaStores[0].length} records`
+      )
+    );
+  csvWriterKeva2
+    .writeRecords(kevaStores[1])
+    .then(() =>
+      console.log(
+        `The Keva 2 CSV file was written successfully with ${kevaStores[1].length} records`
+      )
+    );
+
+  csvWriterMcc1
+    .writeRecords(mccStores[0])
+    .then(() =>
+      console.log(
+        `The Mcc 1 CSV file was written successfully with ${mccStores[0].length} records`
+      )
+    );
+  csvWriterMcc2
+    .writeRecords(mccStores[1])
+    .then(() =>
+      console.log(
+        `The Mcc 2 CSV file was written successfully with ${mccStores[1].length} records`
+      )
+    );
+}
+
+function manageStoresData(
+  dictionary:
+    | {
+        [index: string]: Partial<giftcardBranchInfo>[];
+      }
+    | {
+        [index: string]: Partial<mcccardBranchInfo>[];
+      },
+  corpsArray: giftcardCorpsInfo[] | mcccardCorpsInfo[]
+) {
+  let stores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[] = [];
 
   // Enrich kevaStoresDictionary with general corp info
-  for (let key in giftcardBranchesDictionary) {
-    kevaStoresCounter += giftcardBranchesDictionary[key].length;
-    let corpStores = giftcardBranchesDictionary[key];
+  for (let key in dictionary) {
+    let corpStores = dictionary[key];
     // check if key matches kevaGeneralCorpsArray company name
-    let generalCorpInfo: giftcardCorpsInfo | undefined =
-      giftcardCorpsArray.find(
-        (corp: giftcardCorpsInfo) => corp.company === key
-      );
+    let generalCorpInfo: giftcardCorpsInfo | undefined = corpsArray.find(
+      (corp: giftcardCorpsInfo) => corp.company === key
+    );
 
     if (generalCorpInfo) {
       for (let i = 0; i < corpStores.length; i++) {
@@ -88,7 +146,7 @@ function main() {
           is_online: generalCorpInfo.is_online,
           is_new: generalCorpInfo.is_new,
         };
-        kevaStores.push(enrichedStoreObject);
+        stores.push(enrichedStoreObject);
       }
     } else {
       console.log(`No general info for ${key}`);
@@ -96,7 +154,7 @@ function main() {
   }
 
   // sort by category
-  kevaStores.sort((a, b) => {
+  stores.sort((a, b) => {
     if (!a.company_category || !b.company_category) {
       return 0;
     }
@@ -110,40 +168,25 @@ function main() {
   });
 
   // fix duplicate stores locations
-  kevaStores = correctDuplicateStores(kevaStores as giftcardBranchInfo[]);
+  stores = correctDuplicateStores(stores as giftcardBranchInfo[]);
 
   // Split to 2 files to avoid more than 2000 records - google api limitaion,
   // Also, stop with changing of the category
   let itr = MAX_GOOGLE_API_LAYER_RECORDS;
-  let lastCategory = kevaStores[itr - 1].company_category;
+  let lastCategory = stores[itr - 1].company_category;
 
   while (itr > 0) {
-    if (kevaStores[itr].company_category !== lastCategory) {
+    if (stores[itr].company_category !== lastCategory) {
       break;
     }
     itr--;
   }
 
-  let kevaStores1 = kevaStores.slice(0, itr + 1);
-  let kevaStores2 = kevaStores.slice(itr + 1, kevaStores.length);
+  let stores1 = stores.slice(0, itr + 1);
+  let stores2 = stores.slice(itr + 1, stores.length);
 
-  csvWriterKeva1
-    .writeRecords(kevaStores1)
-    .then(() => console.log("The Keva 1 CSV file was written successfully"));
-  csvWriterKeva2
-    .writeRecords(kevaStores2)
-    .then(() => console.log("The Keva 2 CSV file was written successfully"));
+  return [stores1, stores2];
 }
-
-function manageStoresData(
-  dictionary:
-    | {
-        [index: string]: Partial<giftcardBranchInfo>[];
-      }
-    | {
-        [index: string]: Partial<mcccardBranchInfo>[];
-      }
-) {}
 
 // return an array of the stores after their location has been updated to not contain duplicates
 function correctDuplicateStores(
@@ -180,9 +223,9 @@ function correctDuplicateStores(
           ) / MIL
         ).toString();
 
-        console.log(
-          `Duplicate store: ${storesArray[i].latitude}, ${storesArray[i].longitude} - ${storesArray[j].latitude}, ${storesArray[j].longitude}`
-        );
+        // console.log(
+        //   `Duplicate store: ${storesArray[i].latitude}, ${storesArray[i].longitude} - ${storesArray[j].latitude}, ${storesArray[j].longitude}`
+        // );
       }
     }
   }

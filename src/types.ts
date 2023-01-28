@@ -49,9 +49,7 @@ const giftcardBranchesDictionary: {
 
 import giftcardCorps from "./hvrDB/giftcard.json";
 type giftcardCorpsInfo = typeof giftcardCorps[0];
-console.log(giftcardCorps[0]);
 const giftcardCorpsArray: giftcardCorpsInfo[] = giftcardCorps;
-// console.log(giftcardCorpsArray);
 
 import * as mcccardBranches from "./hvrDB/mcccard_branches.json";
 type mcccardBranchInfo = typeof mcccardBranches.ACE[0];
@@ -64,7 +62,7 @@ type mcccardCorpsInfo = typeof mcccardCorps[0];
 const mcccardCorpsArray: mcccardCorpsInfo[] = mcccardCorps;
 
 // enriched data from the store and the company
-let kevaWriterArray = [
+const kevaWriterArray = [
   { id: "company", title: "חברה" },
   { id: "name", title: "שם" },
   { id: "company_category", title: "קטגוריה" },
@@ -78,7 +76,9 @@ let kevaWriterArray = [
   { id: "longitude", title: "longitude" },
 ];
 
-let teamimWriterArray = [
+const mccWriterArray = kevaWriterArray;
+
+const teamimWriterArray = [
   { id: "name", title: "שם" },
   { id: "desc", title: "תיאור" },
   { id: "type", title: "סוג" },
@@ -104,6 +104,7 @@ export {
   mcccardBranchInfo,
   mcccardCorpsInfo,
   kevaWriterArray,
+  mccWriterArray,
   teamimWriterArray,
   giftcardBranchesDictionary,
   giftcardCorpsArray,
