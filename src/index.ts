@@ -3,12 +3,16 @@ import * as fs from "fs";
 import {
   kevaWriterArray,
   teamimWriterArray,
-  kevaStoresDictionary,
-  kevaGeneralCorpsArray,
+  giftcardBranchesDictionary,
+  giftcardCorpsArray,
   teamimStores,
   TeamimStoreInfo,
-  KevaStoreInfo,
-  KevaCorpsInfo,
+  giftcardBranchInfo,
+  giftcardCorpsInfo,
+  mcccardBranchInfo,
+  mcccardCorpsInfo,
+  mcccardBranchesDictionary,
+  mcccardCorpsArray,
 } from "./types";
 
 const OUTPUD_DIR_PATH = "./output";
@@ -52,27 +56,32 @@ function main() {
   // ****************************************************************
   // ***************************** Keva *****************************
   // ****************************************************************
-  let kevaStores: (Partial<KevaStoreInfo> & Partial<KevaCorpsInfo>)[] = [];
+
+  // TODO: add mcc to output
+
+  let kevaStores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[] =
+    [];
 
   let kevaStoresCounter = 0;
 
   // Enrich kevaStoresDictionary with general corp info
-  for (let key in kevaStoresDictionary) {
-    kevaStoresCounter += kevaStoresDictionary[key].length;
-    let corpStores = kevaStoresDictionary[key];
+  for (let key in giftcardBranchesDictionary) {
+    kevaStoresCounter += giftcardBranchesDictionary[key].length;
+    let corpStores = giftcardBranchesDictionary[key];
     // check if key matches kevaGeneralCorpsArray company name
-    let generalCorpInfo: KevaCorpsInfo | undefined = kevaGeneralCorpsArray.find(
-      (corp: KevaCorpsInfo) => corp.company === key
-    );
+    let generalCorpInfo: giftcardCorpsInfo | undefined =
+      giftcardCorpsArray.find(
+        (corp: giftcardCorpsInfo) => corp.company === key
+      );
 
     if (generalCorpInfo) {
       for (let i = 0; i < corpStores.length; i++) {
-        let store: Partial<KevaStoreInfo> = corpStores[i];
+        let store: Partial<giftcardBranchInfo> = corpStores[i];
         store.company = key;
 
         // enrich store with general corp info
-        let enrichedStoreObject: Partial<KevaStoreInfo> &
-          Partial<KevaCorpsInfo> = {
+        let enrichedStoreObject: Partial<giftcardBranchInfo> &
+          Partial<giftcardCorpsInfo> = {
           ...store,
           company_category: generalCorpInfo.company_category,
           website: generalCorpInfo.website,
@@ -101,7 +110,7 @@ function main() {
   });
 
   // fix duplicate stores locations
-  kevaStores = correctDuplicateStores(kevaStores as KevaStoreInfo[]);
+  kevaStores = correctDuplicateStores(kevaStores as giftcardBranchInfo[]);
 
   // Split to 2 files to avoid more than 2000 records - google api limitaion,
   // Also, stop with changing of the category
@@ -126,9 +135,19 @@ function main() {
     .then(() => console.log("The Keva 2 CSV file was written successfully"));
 }
 
+function manageStoresData(
+  dictionary:
+    | {
+        [index: string]: Partial<giftcardBranchInfo>[];
+      }
+    | {
+        [index: string]: Partial<mcccardBranchInfo>[];
+      }
+) {}
+
 // return an array of the stores after their location has been updated to not contain duplicates
 function correctDuplicateStores(
-  storesArray: KevaStoreInfo[] | TeamimStoreInfo[]
+  storesArray: giftcardBranchInfo[] | TeamimStoreInfo[]
 ) {
   let ctr = 0;
   for (let i = 0; i < storesArray.length - 1; i++) {
@@ -146,12 +165,19 @@ function correctDuplicateStores(
       ) {
         ctr += 1;
         const MIL = 1000000;
-        let rand = Math.random() * 2 - 1;
+        let rand1 = Math.random() * 2 - 1;
+        let rand2 = Math.random() * 2 - 1;
+        const sign1 = Math.random() > 0.5 ? 1 : -1;
+        const sign2 = Math.random() > 0.5 ? 1 : -1;
         storesArray[j].latitude = (
-          Math.round((+storesArray[j].latitude + 0.0002 * rand) * MIL) / MIL
+          Math.round(
+            (+storesArray[j].latitude + 0.0001 * rand1 * sign1) * MIL
+          ) / MIL
         ).toString();
         storesArray[j].longitude = (
-          Math.round((+storesArray[j].longitude + 0.0002 * rand) * MIL) / MIL
+          Math.round(
+            (+storesArray[j].longitude + 0.0001 * rand2 * sign2) * MIL
+          ) / MIL
         ).toString();
 
         console.log(

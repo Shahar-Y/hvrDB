@@ -37,9 +37,9 @@ fetchData(
 
 import teamimBranches from "./hvrDB/teamimcard_branches.json";
 
-type TeamimBranchInfo = typeof teamimBranches.branch[0];
+type TeamimStoreInfo = typeof teamimBranches.branch[0];
 
-let teamimBranchesInfo: TeamimBranchInfo[] = teamimBranches.branch;
+let teamimBranchesInfo: TeamimStoreInfo[] = teamimBranches.branch;
 
 import * as giftcardBranches from "./hvrDB/giftcard_branches.json";
 type giftcardBranchInfo = typeof giftcardBranches.ACE[0] & { company: string };
@@ -56,7 +56,7 @@ const giftcardCorpsArray: giftcardCorpsInfo[] = giftcardCorps;
 import * as mcccardBranches from "./hvrDB/mcccard_branches.json";
 type mcccardBranchInfo = typeof mcccardBranches.ACE[0];
 const mcccardBranchesDictionary: {
-  [index: string]: Partial<giftcardBranchInfo>[];
+  [index: string]: Partial<mcccardBranchInfo>[];
 } = mcccardBranches;
 
 import mcccardCorps from "./hvrDB/mcccard.json";
@@ -98,12 +98,16 @@ let teamimWriterArray = [
 ];
 
 export {
-  giftcardBranchInfo as KevaStoreInfo,
-  giftcardCorpsInfo as KevaCorpsInfo,
-  TeamimBranchInfo as TeamimStoreInfo,
+  giftcardBranchInfo,
+  giftcardCorpsInfo,
+  TeamimStoreInfo,
+  mcccardBranchInfo,
+  mcccardCorpsInfo,
   kevaWriterArray,
   teamimWriterArray,
-  giftcardBranchesDictionary as kevaStoresDictionary,
-  giftcardCorpsArray as kevaGeneralCorpsArray,
+  giftcardBranchesDictionary,
+  giftcardCorpsArray,
+  mcccardBranchesDictionary,
+  mcccardCorpsArray,
   teamimBranchesInfo as teamimStores,
 };
