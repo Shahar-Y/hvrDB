@@ -700,7 +700,6 @@
 ],"LivinGreen":[{"name":"חנות אינטרנטית","region":"מרכז","address":"בית חרות, משרדים-בית חרות","phone":"","latitude":"32.374373","longitude":"34.867544"}
 ],"Lizi's bakery":[{"name":"צפת ","region":"צפון","address":"צפת, הרצל 22","phone":"050-2228972","latitude":"32.957669","longitude":"35.496311"}
 ],"LULU&CO":[{"name":"תל אביב","region":"מרכז","address":"תל אביב, רוטשילד 37","phone":"03-5528282","latitude":"32.063910","longitude":"34.773822"}
-],"Lutos Shop ":[{"name":"מוצרי קיימפינג ","region":"צפון","address":", חנות אינטרנטית ","phone":"050-2291090","latitude":"0.000000","longitude":"0.000000"}
 ],"MALU WILZ":[{"name":"MALU WILZ","region":"מרכז","address":", חנות אינטרנטית","phone":"חנות אינטרנטית","latitude":"0.000000","longitude":"0.000000"}
 ],"MANCHEGO":[{"name":"קיסריה","region":"צפון","address":"קיסריה, נמל קיסריה","phone":"053-9366451","latitude":"32.504409","longitude":"34.891130"}
 ],"MANGO":[{"name":"קניון מול הים","region":"אילת","address":"אילת, הפלמ\"ח 1","phone":"08-6326419","latitude":"29.549872","longitude":"34.953455"}
@@ -3330,12 +3329,10 @@
 ,{"name":"ים המלח ","region":"דרום","address":"ים מלח, קניון עין בוקק","phone":"08-9175753","latitude":"31.199226","longitude":"35.363981"}
 ,{"name":"שערי צדק ","region":"ירושלים","address":"ירושלים, שמואל בייט 12 ","phone":"02-6426941","latitude":"31.773900","longitude":"35.184701"}
 ,{"name":"שפיים","region":"שרון","address":"שפיים, מתחם חוצות שפיים ","phone":"09-9514914","latitude":"32.220820","longitude":"34.828246"}
-],"צ'ק אפ - צמיגים":[{"name":"נתניה","region":"שרון","address":"נתניה, יד חרוצים 8, א.ת פולג","phone":"","latitude":"32.279110","longitude":"34.863580"}
-,{"name":"חולון","region":"מרכז","address":"חולון, האורגים 11","phone":"","latitude":"32.011770","longitude":"34.799610"}
-,{"name":"בילו","region":"מרכז","address":"קרית עקרון, בילו סנטר","phone":"","latitude":"31.861300","longitude":"34.816980"}
-,{"name":"אשקלון","region":"דרום","address":"אשקלון, התעשיה 11, א.ת צפוני","phone":"","latitude":"31.665800","longitude":"34.597470"}
-,{"name":"מגדל העמק","region":"צפון","address":"מגדל העמק, היצירה 9","phone":"","latitude":"32.665790","longitude":"35.241330"}
-,{"name":"אשדוד","region":"דרום","address":"אשדוד, האשלג 31","phone":"","latitude":"31.831080","longitude":"34.679850"}
+],"צ'ק אפ - צמיגים":[{"name":"נתניה","region":"שרון","address":"נתניה, יד חרוצים 8, א.ת פולג","phone":"054-3510788","latitude":"32.279110","longitude":"34.863580"}
+,{"name":"חולון","region":"מרכז","address":"חולון, האורגים 11","phone":"053-5550752","latitude":"32.011770","longitude":"34.799610"}
+,{"name":"בילו","region":"מרכז","address":"קרית עקרון, בילו סנטר","phone":"050-3888881","latitude":"31.861300","longitude":"34.816980"}
+,{"name":"אשקלון","region":"דרום","address":"אשקלון, התעשיה 11, א.ת צפוני","phone":"053-7778561","latitude":"31.665800","longitude":"34.597470"}
 ],"קאמקורה":[{"name":"רמת גן ","region":"מרכז","address":"רמת גן, אהליאב 5","phone":"073-2777778","latitude":"32.087445","longitude":"34.802852"}
 ],"קדמה קפה":[{"name":"קדמה רמת ישי","region":"צפון","address":"רמת ישי, האורן 5","phone":"072-2171111","latitude":"32.705930","longitude":"35.170040"}
 ,{"name":"קדמה תל אביב","region":"מרכז","address":"תל אביב, התעשייה 8","phone":"072-2171111","latitude":"32.067360","longitude":"34.786020"}
