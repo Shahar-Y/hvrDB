@@ -61,6 +61,8 @@ import mcccardCorps from "./hvrDB/mcccard.json";
 type mcccardCorpsInfo = typeof mcccardCorps[0];
 const mcccardCorpsArray: mcccardCorpsInfo[] = mcccardCorps;
 
+type EnrichedStoreInfo = TeamimStoreInfo;
+
 // enriched data from the store and the company
 const kevaWriterArray = [
   { id: "company", title: "חברה" },
@@ -103,6 +105,7 @@ export {
   TeamimStoreInfo,
   mcccardBranchInfo,
   mcccardCorpsInfo,
+  EnrichedStoreInfo,
   kevaWriterArray,
   mccWriterArray,
   teamimWriterArray,

@@ -11,6 +11,7 @@ import {
   giftcardCorpsInfo,
   mcccardBranchInfo,
   mcccardCorpsInfo,
+  EnrichedStoreInfo,
   mcccardBranchesDictionary,
   mcccardCorpsArray,
   mccWriterArray,
@@ -58,7 +59,7 @@ function main() {
   // **************************** Teamim ****************************
   // ****************************************************************
   // fix duplicate stores locations
-  let fixedTeamimStores = correctDuplicateStores(teamimStores);
+  let fixedTeamimStores = correctDuplicateStoresCircle(teamimStores);
 
   csvWriterTeamim
     .writeRecords(fixedTeamimStores)
@@ -124,7 +125,7 @@ function manageStoresData(
 ) {
   let stores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[] = [];
 
-  // Enrich kevaStoresDictionary with general corp info
+  // Enrich dictionary with general corp info
   for (let key in dictionary) {
     let corpStores = dictionary[key];
     // check if key matches kevaGeneralCorpsArray company name
@@ -153,6 +154,9 @@ function manageStoresData(
     }
   }
 
+  // fix duplicate stores locations
+  stores = correctDuplicateStoresCircle(stores as EnrichedStoreInfo[]);
+
   // sort by category
   stores.sort((a, b) => {
     if (!a.company_category || !b.company_category) {
@@ -166,9 +170,6 @@ function manageStoresData(
     }
     return 0;
   });
-
-  // fix duplicate stores locations
-  stores = correctDuplicateStores(stores as giftcardBranchInfo[]);
 
   // Split to 2 files to avoid more than 2000 records - google api limitaion,
   // Also, stop with changing of the category
@@ -188,49 +189,104 @@ function manageStoresData(
   return [stores1, stores2];
 }
 
-// return an array of the stores after their location has been updated to not contain duplicates
-function correctDuplicateStores(
-  storesArray: giftcardBranchInfo[] | TeamimStoreInfo[]
-) {
-  let ctr = 0;
-  for (let i = 0; i < storesArray.length - 1; i++) {
-    let store = storesArray[i];
-    for (let j = i + 1; j < storesArray.length; j++) {
-      let store2 = storesArray[j];
-      // check if store location is not 0,0 and if it is the same as the next store
-      if (
-        +store.latitude > 0.1 &&
-        +store.longitude > 0.1 &&
-        +store2.latitude > 0.1 &&
-        +store2.longitude > 0.1 &&
-        store2.latitude === store.latitude &&
-        store2.longitude === store.longitude
-      ) {
-        ctr += 1;
-        const MIL = 1000000;
-        let rand1 = Math.random() * 2 - 1;
-        let rand2 = Math.random() * 2 - 1;
-        const sign1 = Math.random() > 0.5 ? 1 : -1;
-        const sign2 = Math.random() > 0.5 ? 1 : -1;
-        storesArray[j].latitude = (
-          Math.round(
-            (+storesArray[j].latitude + 0.0001 * rand1 * sign1) * MIL
-          ) / MIL
-        ).toString();
-        storesArray[j].longitude = (
-          Math.round(
-            (+storesArray[j].longitude + 0.0001 * rand2 * sign2) * MIL
-          ) / MIL
-        ).toString();
+// create a dictionary of the stores that have the same coordinates
+// Key: latitude-longitude string
+// Value: array of stores with the same coordinates
+function createduplicateCoordinatesDictionary(
+  storesArray: EnrichedStoreInfo[]
+): {
+  [index: string]: EnrichedStoreInfo[];
+} {
+  let duplicateCoordinatesDictionary: {
+    [index: string]: EnrichedStoreInfo[];
+  } = {};
 
-        // console.log(
-        //   `Duplicate store: ${storesArray[i].latitude}, ${storesArray[i].longitude} - ${storesArray[j].latitude}, ${storesArray[j].longitude}`
-        // );
-      }
+  for (let i = 0; i < storesArray.length; i++) {
+    let store: EnrichedStoreInfo = storesArray[i];
+
+    let key = `${store.latitude}-${store.longitude}`;
+    if (duplicateCoordinatesDictionary[key]) {
+      duplicateCoordinatesDictionary[key].push(store);
+    } else {
+      duplicateCoordinatesDictionary[key] = [store];
     }
   }
-  console.log(`Fixed ${ctr} duplicate stores`);
-  return storesArray;
+
+  return duplicateCoordinatesDictionary;
+}
+
+// return an array of the stores after their location has been updated so that
+// stored that had the same coordinates will now be located in a circle around the original location
+function correctDuplicateStoresCircle(
+  storesArray: EnrichedStoreInfo[]
+): EnrichedStoreInfo[] {
+  let duplicateCoordinatesDictionary =
+    createduplicateCoordinatesDictionary(storesArray);
+
+  // if there are no duplicates, return the original array
+  if (
+    Object.keys(duplicateCoordinatesDictionary).length === storesArray.length
+  ) {
+    return storesArray;
+  }
+
+  // if there are duplicates, update the coordinates of the stores
+  let updatedStoresArray: EnrichedStoreInfo[] = [];
+
+  for (let key in duplicateCoordinatesDictionary) {
+    let storesWithSameCoordinates = duplicateCoordinatesDictionary[key];
+
+    // if there is only one store with the same coordinates, add it to the updated array
+    if (storesWithSameCoordinates.length === 1) {
+      updatedStoresArray.push(storesWithSameCoordinates[0]);
+    } else {
+      // if there are more than one store with the same coordinates, update their coordinates
+      let updatedStoresWithSameCoordinates = updateStoresCoordinates(
+        storesWithSameCoordinates
+      );
+      updatedStoresArray = updatedStoresArray.concat(
+        updatedStoresWithSameCoordinates
+      );
+    }
+  }
+
+  return updatedStoresArray;
+}
+
+// Update the coordinates of the stores so that they will be located
+// in a circle around the original location
+function updateStoresCoordinates(
+  storesWithSameCoordinates: EnrichedStoreInfo[]
+): EnrichedStoreInfo[] {
+  let updatedStoresWithSameCoordinates: EnrichedStoreInfo[] = [];
+
+  // distance between 0.0001 to 0.0002 depending on the number of stores - the more stores, the bigger the distance
+  let distanceBetweenStores =
+    0.0001 + (storesWithSameCoordinates.length - 1) * 0.000003;
+
+  // calculate the angle between the stores
+  let angleBetweenStores = (2 * Math.PI) / storesWithSameCoordinates.length;
+
+  // update the coordinates of the stores
+  for (let i = 0; i < storesWithSameCoordinates.length; i++) {
+    let store = storesWithSameCoordinates[i];
+
+    let updatedStore: EnrichedStoreInfo = {
+      ...store,
+      latitude:
+        +store.latitude +
+        distanceBetweenStores * Math.sin(angleBetweenStores * i) +
+        "",
+      longitude:
+        +store.longitude +
+        distanceBetweenStores * Math.cos(angleBetweenStores * i) +
+        "",
+    };
+
+    updatedStoresWithSameCoordinates.push(updatedStore);
+  }
+
+  return updatedStoresWithSameCoordinates;
 }
 
 main();
