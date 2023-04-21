@@ -20,6 +20,15 @@ import {
 const OUTPUD_DIR_PATH = "./output";
 const MAX_GOOGLE_API_LAYER_RECORDS = 2000;
 
+// delete directory recursively
+try {
+  fs.rmdirSync(OUTPUD_DIR_PATH, { recursive: true });
+
+  console.log(`${OUTPUD_DIR_PATH} is deleted!`);
+} catch (err) {
+  console.error(`Error while deleting ${OUTPUD_DIR_PATH}.`);
+}
+
 // create output directory if not exists
 if (!fs.existsSync(OUTPUD_DIR_PATH)) {
   fs.mkdirSync(OUTPUD_DIR_PATH, { recursive: true });
@@ -64,23 +73,22 @@ function main() {
   csvWriterTeamim
     .writeRecords(fixedTeamimStores)
     .then(() =>
-      console.log(
-        `Teamim file was written successfully with ${fixedTeamimStores.length} records`
-      )
+      console.log(`Teamim file was written successfully with ${fixedTeamimStores.length} records`)
     );
 
   // ****************************************************************
   // *********************** Giftcard and MCC ***********************
   // ****************************************************************
 
-  let kevaStores: (Partial<giftcardBranchInfo> &
-    Partial<giftcardCorpsInfo>)[][] = manageStoresData(
+  let kevaStores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[][] = manageStoresData(
     giftcardBranchesDictionary,
     giftcardCorpsArray
   );
 
-  let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] =
-    manageStoresData(mcccardBranchesDictionary, mcccardCorpsArray);
+  let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] = manageStoresData(
+    mcccardBranchesDictionary,
+    mcccardCorpsArray
+  );
 
   csvWriterKeva1
     .writeRecords(kevaStores[0])
@@ -100,16 +108,12 @@ function main() {
   csvWriterMcc1
     .writeRecords(mccStores[0])
     .then(() =>
-      console.log(
-        `The Mcc 1 CSV file was written successfully with ${mccStores[0].length} records`
-      )
+      console.log(`The Mcc 1 CSV file was written successfully with ${mccStores[0].length} records`)
     );
   csvWriterMcc2
     .writeRecords(mccStores[1])
     .then(() =>
-      console.log(
-        `The Mcc 2 CSV file was written successfully with ${mccStores[1].length} records`
-      )
+      console.log(`The Mcc 2 CSV file was written successfully with ${mccStores[1].length} records`)
     );
 }
 
@@ -139,8 +143,7 @@ function manageStoresData(
         store.company = key;
 
         // enrich store with general corp info
-        let enrichedStoreObject: Partial<giftcardBranchInfo> &
-          Partial<giftcardCorpsInfo> = {
+        let enrichedStoreObject: Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo> = {
           ...store,
           company_category: generalCorpInfo.company_category,
           website: generalCorpInfo.website,
@@ -192,9 +195,7 @@ function manageStoresData(
 // create a dictionary of the stores that have the same coordinates
 // Key: latitude-longitude string
 // Value: array of stores with the same coordinates
-function createduplicateCoordinatesDictionary(
-  storesArray: EnrichedStoreInfo[]
-): {
+function createduplicateCoordinatesDictionary(storesArray: EnrichedStoreInfo[]): {
   [index: string]: EnrichedStoreInfo[];
 } {
   let duplicateCoordinatesDictionary: {
@@ -217,16 +218,11 @@ function createduplicateCoordinatesDictionary(
 
 // return an array of the stores after their location has been updated so that
 // stored that had the same coordinates will now be located in a circle around the original location
-function correctDuplicateStoresCircle(
-  storesArray: EnrichedStoreInfo[]
-): EnrichedStoreInfo[] {
-  let duplicateCoordinatesDictionary =
-    createduplicateCoordinatesDictionary(storesArray);
+function correctDuplicateStoresCircle(storesArray: EnrichedStoreInfo[]): EnrichedStoreInfo[] {
+  let duplicateCoordinatesDictionary = createduplicateCoordinatesDictionary(storesArray);
 
   // if there are no duplicates, return the original array
-  if (
-    Object.keys(duplicateCoordinatesDictionary).length === storesArray.length
-  ) {
+  if (Object.keys(duplicateCoordinatesDictionary).length === storesArray.length) {
     return storesArray;
   }
 
@@ -241,12 +237,8 @@ function correctDuplicateStoresCircle(
       updatedStoresArray.push(storesWithSameCoordinates[0]);
     } else {
       // if there are more than one store with the same coordinates, update their coordinates
-      let updatedStoresWithSameCoordinates = updateStoresCoordinates(
-        storesWithSameCoordinates
-      );
-      updatedStoresArray = updatedStoresArray.concat(
-        updatedStoresWithSameCoordinates
-      );
+      let updatedStoresWithSameCoordinates = updateStoresCoordinates(storesWithSameCoordinates);
+      updatedStoresArray = updatedStoresArray.concat(updatedStoresWithSameCoordinates);
     }
   }
 
@@ -261,8 +253,7 @@ function updateStoresCoordinates(
   let updatedStoresWithSameCoordinates: EnrichedStoreInfo[] = [];
 
   // distance between 0.0001 to 0.0002 depending on the number of stores - the more stores, the bigger the distance
-  let distanceBetweenStores =
-    0.0001 + (storesWithSameCoordinates.length - 1) * 0.000003;
+  let distanceBetweenStores = 0.0001 + (storesWithSameCoordinates.length - 1) * 0.000003;
 
   // calculate the angle between the stores
   let angleBetweenStores = (2 * Math.PI) / storesWithSameCoordinates.length;
@@ -273,14 +264,8 @@ function updateStoresCoordinates(
 
     let updatedStore: EnrichedStoreInfo = {
       ...store,
-      latitude:
-        +store.latitude +
-        distanceBetweenStores * Math.sin(angleBetweenStores * i) +
-        "",
-      longitude:
-        +store.longitude +
-        distanceBetweenStores * Math.cos(angleBetweenStores * i) +
-        "",
+      latitude: +store.latitude + distanceBetweenStores * Math.sin(angleBetweenStores * i) + "",
+      longitude: +store.longitude + distanceBetweenStores * Math.cos(angleBetweenStores * i) + "",
     };
 
     updatedStoresWithSameCoordinates.push(updatedStore);
