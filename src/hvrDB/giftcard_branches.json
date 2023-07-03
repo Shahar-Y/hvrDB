@@ -787,8 +787,6 @@
 ,{"name":"International Outlet Store","region":"מרכז","address":"חולון, המכתש 6","phone":"","latitude":"32.025818","longitude":"34.794728"}
 ,{"name":"אילת","region":"אילת","address":"אילת, דרך פעמי השלום 8 - טיילת רויאל ביץ' ","phone":"","latitude":"29.548792","longitude":"34.963130"}
 ],"Noam Living":[{"name":"חנות אינטרנטית ","region":"מרכז","address":", חנות אינטרנטית","phone":"","latitude":"0.000000","longitude":"0.000000"}
-],"NVL - נובל קולקשן":[{"name":"נובל קולקשן ","region":"מרכז","address":"גבעת שמואל, הערבה 1 ","phone":"03-6336880","latitude":"32.084025","longitude":"34.855563"}
-,{"name":"פלדינקוס","region":"מרכז","address":"קריית שדה התעופה, שרון 5 ","phone":"03-9788800","latitude":"31.988021","longitude":"34.916504"}
 ],"NYOU אינטר ג'ינס ":[{"name":"קניון מלכת שבא-אילת","region":"אילת","address":"אילת, טיילת מלכת שבא","phone":"08-6338987","latitude":"29.550612","longitude":"34.960949"}
 ,{"name":"הסתת-אילת","region":"אילת","address":"אילת, הסתת 20","phone":"08-6315868","latitude":"29.565640","longitude":"34.960021"}
 ,{"name":"קניון אייס מול-אילת","region":"אילת","address":"אילת, קאמפן 8, קניון אייס מול","phone":"08-6317008","latitude":"29.554090","longitude":"34.965582"}
@@ -1145,6 +1143,28 @@
 ],"Zeero מוצרי אנרגיה":[{"name":"פתח תקווה ","region":"מרכז","address":"פתח תקווה, מגדלי בסר סיטי - מגדל T ","phone":"05-59945599","latitude":"32.090708","longitude":"34.860492"}
 ],"ZEPTER":[{"name":"חנות אינטרנטית או הזמנות טלפוניות ","region":"שרון","address":"חבצלת השרון, הפרדסים 13","phone":"09-8664495","latitude":"32.358451","longitude":"34.865403"}
 ],"Ziegler&Brown":[{"name":"חנות אינטרנטית משלוחים לכל הארץ","region":"מרכז","address":"חנות אינטרנטית משלוחים לכל הארץ, ","phone":"","latitude":"0.000000","longitude":"0.000000"}
+],"א.א אורטופדיה":[{"name":"פתח תקווה ","region":"מרכז","address":"פתח תקווה, בר כוכבא 33","phone":"","latitude":"32.093771","longitude":"34.885448"}
+,{"name":"תל אביב - קניון גן העיר ","region":"מרכז","address":"תל אביב, אבן גבירול 71","phone":"","latitude":"32.082315","longitude":"34.781202"}
+,{"name":"עפולה","region":"צפון","address":"עפולה, הרב לוין 13","phone":"","latitude":"32.609896","longitude":"35.287441"}
+,{"name":"חיפה ","region":"צפון","address":"חיפה, החלוץ 31","phone":"","latitude":"32.811129","longitude":"34.999145"}
+,{"name":"אשקלון ","region":"דרום","address":"אשקלון, הנשיא 101","phone":"","latitude":"31.664400","longitude":"34.562622"}
+,{"name":"אשדוד","region":"דרום","address":"אשדוד, הבנים 4","phone":"","latitude":"31.794485","longitude":"34.639132"}
+,{"name":"בת ים ","region":"מרכז","address":"בת ים, בר שאול 2 פינת רוטשילד","phone":"","latitude":"32.019981","longitude":"34.756081"}
+,{"name":"טבריה - מול הדואר ","region":"צפון","address":"טבריה, אלחדיף 1","phone":"","latitude":"32.789213","longitude":"35.539728"}
+,{"name":"יהוד ","region":"מרכז","address":"יהוד, שבזי 10","phone":"","latitude":"32.027844","longitude":"34.895438"}
+,{"name":"רמלה","region":"מרכז","address":"רמלה, הרצל 73 פינת הגדוד העברי","phone":"","latitude":"31.927539","longitude":"34.872407"}
+,{"name":"באר שבע ","region":"דרום","address":"באר שבע, הנרייטה סולד 4","phone":"","latitude":"31.247490","longitude":"34.801056"}
+,{"name":"עפולה ","region":"צפון","address":"עפולה בית חולים העמק, יצחק רבין 21","phone":"","latitude":"32.621049","longitude":"35.316612"}
+,{"name":"רמת גן ","region":"מרכז","address":"רמת גן, ארלוזורוב 5","phone":"","latitude":"32.079127","longitude":"34.814087"}
+,{"name":"רעננה ","region":"שרון","address":"רעננה, אחוזה 125 פינת ז'בוטינסקי ","phone":"","latitude":"32.180458","longitude":"34.873987"}
+,{"name":"ירושלים","region":"ירושלים","address":"ירושלים, ירמיהו 9","phone":"","latitude":"31.792059","longitude":"35.209449"}
+,{"name":"חדרה ","region":"צפון","address":"חדרה, הנשיא 56","phone":"","latitude":"32.438829","longitude":"34.922616"}
+,{"name":"ראש פינה ","region":"צפון","address":"ראש פינה, האגס 1","phone":"","latitude":"32.968581","longitude":"35.550558"}
+,{"name":"קרית מוצקין ","region":"צפון","address":"קרית מוצקין, קק\"ל 17","phone":"","latitude":"32.829526","longitude":"35.074059"}
+,{"name":"הוד השרון ","region":"שרון","address":"הוד השרון, רמתיים 55","phone":"","latitude":"32.157106","longitude":"34.894853"}
+,{"name":"ראש העין ","region":"מרכז","address":"ראש העין, שבזי 10","phone":"","latitude":"32.098553","longitude":"34.941894"}
+,{"name":"נתיבות ","region":"דרום","address":"נתיבות, שדרות ירושלים 18","phone":"","latitude":"31.424073","longitude":"34.598221"}
+,{"name":"קרית גת - קניון לב העיר ","region":"דרום","address":"קריית גת, ככר פז 3","phone":"","latitude":"31.606979","longitude":"34.772803"}
 ],"א.ל.מ":[{"name":"פאואר סנטר שערי חדרה","region":"צפון","address":"חדרה, יהודי פקיעין 1","phone":"","latitude":"32.434045","longitude":"34.909338"}
 ,{"name":"פאואר סנטר שער הכרמל","region":"צפון","address":"חיפה, מתחם מת\"מ, נחום מילר 5","phone":"","latitude":"32.782981","longitude":"34.959522"}
 ,{"name":"פאור סנטר","region":"צפון","address":"נשר, דרך בר יהודה 147","phone":"","latitude":"32.779825","longitude":"35.039642"}
