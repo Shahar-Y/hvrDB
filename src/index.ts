@@ -204,21 +204,6 @@ function manageStoresData(
   let [stores1, stores2] = splitStores(stores);
 
   return [stores1, stores2];
-
-  // let itr = MAX_GOOGLE_API_LAYER_RECORDS;
-  // let lastCategory = stores[itr - 1].company_category;
-
-  // while (itr > 0) {
-  //   if (stores[itr].company_category !== lastCategory) {
-  //     break;
-  //   }
-  //   itr--;
-  // }
-
-  // let stores1 = stores.slice(0, itr + 1);
-  // let stores2 = stores.slice(itr + 1, stores.length);
-
-  // return [stores1, stores2];
 }
 
 type StoresType = Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>;
