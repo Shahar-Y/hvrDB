@@ -200,19 +200,51 @@ function manageStoresData(
   });
 
   // Split to 2 files to avoid more than 2000 records - google api limitaion,
-  // Also, stop with changing of the category
-  let itr = MAX_GOOGLE_API_LAYER_RECORDS;
-  let lastCategory = stores[itr - 1].company_category;
+  // Also, stop with changing of the category to make sure a category isn't split between the 2 files
+  let [stores1, stores2] = splitStores(stores);
 
-  while (itr > 0) {
+  return [stores1, stores2];
+
+  // let itr = MAX_GOOGLE_API_LAYER_RECORDS;
+  // let lastCategory = stores[itr - 1].company_category;
+
+  // while (itr > 0) {
+  //   if (stores[itr].company_category !== lastCategory) {
+  //     break;
+  //   }
+  //   itr--;
+  // }
+
+  // let stores1 = stores.slice(0, itr + 1);
+  // let stores2 = stores.slice(itr + 1, stores.length);
+
+  // return [stores1, stores2];
+}
+
+type StoresType = Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>;
+// fill the maximum amount of stores in each file without splitting a category
+function splitStores(stores: StoresType[]): [StoresType[], StoresType[]] {
+  let stores1: StoresType[] = [];
+  let stores2: StoresType[] = [];
+
+  let itr = 0;
+  let lastCategory = stores[itr].company_category;
+
+  while (itr < stores.length) {
     if (stores[itr].company_category !== lastCategory) {
+      lastCategory = stores[itr].company_category;
+    }
+
+    if (stores1.length < MAX_GOOGLE_API_LAYER_RECORDS) {
+      stores1.push(stores[itr]);
+    } else if (stores2.length < MAX_GOOGLE_API_LAYER_RECORDS) {
+      stores2.push(stores[itr]);
+    } else {
       break;
     }
-    itr--;
-  }
 
-  let stores1 = stores.slice(0, itr + 1);
-  let stores2 = stores.slice(itr + 1, stores.length);
+    itr++;
+  }
 
   return [stores1, stores2];
 }
