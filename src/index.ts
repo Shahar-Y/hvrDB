@@ -87,7 +87,10 @@ async function main() {
   // **************************** Teamim ****************************
   // ****************************************************************
   // fix duplicate stores locations
-  let fixedTeamimStores = correctDuplicateStoresCircle(teamimStores);
+  let teamimStoresNoZero = teamimStores.filter(
+    (store) => +store.latitude >= 1 && +store.longitude >= 1
+  );
+  let fixedTeamimStores = correctDuplicateStoresCircle(teamimStoresNoZero);
 
   csvWriterTeamim
     .writeRecords(fixedTeamimStores)

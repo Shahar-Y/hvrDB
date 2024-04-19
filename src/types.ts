@@ -22,8 +22,14 @@ fetchData(
   "https://www.hvr.co.il/bs2/datasets/giftcard_branches.json",
   "./src/hvrDB/giftcard_branches.json"
 );
-fetchData("https://www.hvr.co.il/bs2/datasets/giftcard.json", "./src/hvrDB/giftcard.json");
-fetchData("https://www.mcc.co.il/bs2/datasets/mcccard.json", "./src/hvrDB/mcccard.json");
+fetchData(
+  "https://www.hvr.co.il/bs2/datasets/giftcard.json",
+  "./src/hvrDB/giftcard.json"
+);
+fetchData(
+  "https://www.mcc.co.il/bs2/datasets/mcccard.json",
+  "./src/hvrDB/mcccard.json"
+);
 fetchData(
   "https://www.mcc.co.il/bs2/datasets/mcccard_branches.json",
   "./src/hvrDB/mcccard_branches.json"
@@ -36,7 +42,9 @@ type TeamimStoreInfo = (typeof teamimBranches.branch)[0];
 let teamimBranchesInfo: TeamimStoreInfo[] = teamimBranches.branch;
 
 import * as giftcardBranches from "./hvrDB/giftcard_branches.json";
-type giftcardBranchInfo = (typeof giftcardBranches.ACE)[0] & { company: string };
+type giftcardBranchInfo = (typeof giftcardBranches.ACE)[0] & {
+  company: string;
+};
 const giftcardBranchesDictionary: {
   [index: string]: Partial<giftcardBranchInfo>[];
 } = giftcardBranches;
