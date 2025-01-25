@@ -178,7 +178,13 @@ function manageStoresData(
           is_online: generalCorpInfo.is_online,
           is_new: generalCorpInfo.is_new,
         };
-        stores.push(enrichedStoreObject);
+        // Check that the enrichedStoreObject coordinates ar at least of length 1 from 0,0
+        if (enrichedStoreObject && enrichedStoreObject.latitude && enrichedStoreObject.longitude &&
+          +enrichedStoreObject.latitude >= 1 &&
+          +enrichedStoreObject.longitude >= 1
+        ) {
+          stores.push(enrichedStoreObject);
+        } 
       }
     } else {
       console.log(`No general info for ${key}`);
