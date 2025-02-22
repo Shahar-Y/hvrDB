@@ -8,12 +8,12 @@ import {
   teamimStores,
   giftcardBranchInfo,
   giftcardCorpsInfo,
-  mcccardBranchInfo,
-  mcccardCorpsInfo,
+  // mcccardBranchInfo,
+  // mcccardCorpsInfo,
   EnrichedStoreInfo,
-  mcccardBranchesDictionary,
-  mcccardCorpsArray,
-  mccWriterArray,
+  // mcccardBranchesDictionary,
+  // mcccardCorpsArray,
+  // mccWriterArray,
 } from "./types";
 
 const OUTPUD_DIR_PATH = "./output";
@@ -53,22 +53,22 @@ async function initWriters() {
     header: kevaWriterArray,
   });
 
-  const csvWriterMcc1 = createCsvWriter({
-    path: OUTPUD_DIR_PATH + "/mcc1.csv",
-    header: mccWriterArray,
-  });
+  // const csvWriterMcc1 = createCsvWriter({
+  //   path: OUTPUD_DIR_PATH + "/mcc1.csv",
+  //   header: mccWriterArray,
+  // });
 
-  const csvWriterMcc2 = createCsvWriter({
-    path: OUTPUD_DIR_PATH + "/mcc2.csv",
-    header: mccWriterArray,
-  });
+  // const csvWriterMcc2 = createCsvWriter({
+  //   path: OUTPUD_DIR_PATH + "/mcc2.csv",
+  //   header: mccWriterArray,
+  // });
 
   return {
     csvWriterTeamim,
     csvWriterKeva1,
     csvWriterKeva2,
-    csvWriterMcc1,
-    csvWriterMcc2,
+    // csvWriterMcc1,
+    // csvWriterMcc2,
   };
 }
 
@@ -79,8 +79,8 @@ async function main() {
     csvWriterTeamim,
     csvWriterKeva1,
     csvWriterKeva2,
-    csvWriterMcc1,
-    csvWriterMcc2,
+    // csvWriterMcc1,
+    // csvWriterMcc2,
   } = await initWriters();
 
   // ****************************************************************
@@ -110,8 +110,8 @@ async function main() {
     giftcardCorpsArray
   );
 
-  let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] =
-    manageStoresData(mcccardBranchesDictionary, mcccardCorpsArray);
+  // let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] =
+  //   manageStoresData(mcccardBranchesDictionary, mcccardCorpsArray);
 
   csvWriterKeva1
     .writeRecords(kevaStores[0])
@@ -128,31 +128,31 @@ async function main() {
       )
     );
 
-  csvWriterMcc1
-    .writeRecords(mccStores[0])
-    .then(() =>
-      console.log(
-        `The Mcc 1 CSV file was written successfully with ${mccStores[0].length} records`
-      )
-    );
-  csvWriterMcc2
-    .writeRecords(mccStores[1])
-    .then(() =>
-      console.log(
-        `The Mcc 2 CSV file was written successfully with ${mccStores[1].length} records`
-      )
-    );
+  // csvWriterMcc1
+  //   .writeRecords(mccStores[0])
+  //   .then(() =>
+  //     console.log(
+  //       `The Mcc 1 CSV file was written successfully with ${mccStores[0].length} records`
+  //     )
+  //   );
+  // csvWriterMcc2
+  //   .writeRecords(mccStores[1])
+  //   .then(() =>
+  //     console.log(
+  //       `The Mcc 2 CSV file was written successfully with ${mccStores[1].length} records`
+  //     )
+  //   );
 }
 
 function manageStoresData(
   dictionary:
     | {
         [index: string]: Partial<giftcardBranchInfo>[];
-      }
-    | {
-        [index: string]: Partial<mcccardBranchInfo>[];
       },
-  corpsArray: giftcardCorpsInfo[] | mcccardCorpsInfo[]
+    // | {
+    //     [index: string]: Partial<mcccardBranchInfo>[];
+    //   },
+  corpsArray: giftcardCorpsInfo[] //| mcccardCorpsInfo[]
 ) {
   let stores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[] = [];
 
