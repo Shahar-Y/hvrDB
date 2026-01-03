@@ -3,17 +3,15 @@ import * as fs from "fs";
 import {
   kevaWriterArray,
   teamimWriterArray,
-  giftcardBranchesDictionary,
-  giftcardCorpsArray,
-  teamimStores,
   giftcardBranchInfo,
   giftcardCorpsInfo,
-  // mcccardBranchInfo,
-  // mcccardCorpsInfo,
+  mcccardBranchInfo,
+  mcccardCorpsInfo,
+  mccRestStoreInfo,
   EnrichedStoreInfo,
-  // mcccardBranchesDictionary,
-  // mcccardCorpsArray,
-  // mccWriterArray,
+  mccWriterArray,
+  fetchAllData,
+  loadAllData,
 } from "./types";
 
 const OUTPUD_DIR_PATH = "./output";
@@ -53,44 +51,73 @@ async function initWriters() {
     header: kevaWriterArray,
   });
 
-  // const csvWriterMcc1 = createCsvWriter({
-  //   path: OUTPUD_DIR_PATH + "/mcc1.csv",
-  //   header: mccWriterArray,
-  // });
+  const csvWriterMsscard1 = createCsvWriter({
+    path: OUTPUD_DIR_PATH + "/msscard1.csv",
+    header: mccWriterArray,
+  });
 
-  // const csvWriterMcc2 = createCsvWriter({
-  //   path: OUTPUD_DIR_PATH + "/mcc2.csv",
-  //   header: mccWriterArray,
-  // });
+  const csvWriterMsscard2 = createCsvWriter({
+    path: OUTPUD_DIR_PATH + "/msscard2.csv",
+    header: mccWriterArray,
+  });
+
+  const csvWriterMccRest1 = createCsvWriter({
+    path: OUTPUD_DIR_PATH + "/mcc_rest1.csv",
+    header: teamimWriterArray,
+  });
+
+  const csvWriterMccRest2 = createCsvWriter({
+    path: OUTPUD_DIR_PATH + "/mcc_rest2.csv",
+    header: teamimWriterArray,
+  });
 
   return {
     csvWriterTeamim,
     csvWriterKeva1,
     csvWriterKeva2,
-    // csvWriterMcc1,
-    // csvWriterMcc2,
+    csvWriterMsscard1,
+    csvWriterMsscard2,
+    csvWriterMccRest1,
+    csvWriterMccRest2,
   };
 }
 
 async function main() {
   console.log("Start running script");
 
+  // Fetch all data files first
+  console.log("Fetching data files...");
+  await fetchAllData();
+  console.log("Data files fetched successfully!");
+
+  // Load all data after fetching
+  const {
+    teamimBranchesInfo,
+    giftcardBranchesDictionary,
+    giftcardCorpsArray,
+    mcccardBranchesDictionary,
+    mcccardCorpsArray,
+    mccRestBranchesInfo,
+  } = loadAllData();
+
   const {
     csvWriterTeamim,
     csvWriterKeva1,
     csvWriterKeva2,
-    // csvWriterMcc1,
-    // csvWriterMcc2,
+    csvWriterMsscard1,
+    csvWriterMsscard2,
+    csvWriterMccRest1,
+    csvWriterMccRest2,
   } = await initWriters();
 
   // ****************************************************************
   // **************************** Teamim ****************************
   // ****************************************************************
   // fix duplicate stores locations
-  let teamimStoresNoZero = teamimStores.filter(
-    (store) => +store.latitude >= 1 && +store.longitude >= 1
+  let teamimStoresNoZero = teamimBranchesInfo.filter(
+    (store) => store.latitude && store.longitude && +store.latitude >= 1 && +store.longitude >= 1
   );
-  let fixedTeamimStores = correctDuplicateStoresCircle(teamimStoresNoZero);
+  let fixedTeamimStores = correctDuplicateStoresCircle(teamimStoresNoZero as EnrichedStoreInfo[]);
 
   csvWriterTeamim
     .writeRecords(fixedTeamimStores)
@@ -106,12 +133,12 @@ async function main() {
 
   let kevaStores: (Partial<giftcardBranchInfo> &
     Partial<giftcardCorpsInfo>)[][] = manageStoresData(
-    giftcardBranchesDictionary,
-    giftcardCorpsArray
-  );
+      giftcardBranchesDictionary,
+      giftcardCorpsArray
+    );
 
-  // let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] =
-  //   manageStoresData(mcccardBranchesDictionary, mcccardCorpsArray);
+  let mccStores: (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>)[][] =
+    manageStoresData(mcccardBranchesDictionary, mcccardCorpsArray);
 
   csvWriterKeva1
     .writeRecords(kevaStores[0])
@@ -128,51 +155,104 @@ async function main() {
       )
     );
 
-  // csvWriterMcc1
-  //   .writeRecords(mccStores[0])
-  //   .then(() =>
-  //     console.log(
-  //       `The Mcc 1 CSV file was written successfully with ${mccStores[0].length} records`
-  //     )
-  //   );
-  // csvWriterMcc2
-  //   .writeRecords(mccStores[1])
-  //   .then(() =>
-  //     console.log(
-  //       `The Mcc 2 CSV file was written successfully with ${mccStores[1].length} records`
-  //     )
-  //   );
+  csvWriterMsscard1
+    .writeRecords(mccStores[0])
+    .then(() =>
+      console.log(
+        `The Msscard 1 CSV file was written successfully with ${mccStores[0].length} records`
+      )
+    );
+  csvWriterMsscard2
+    .writeRecords(mccStores[1])
+    .then(() =>
+      console.log(
+        `The Msscard 2 CSV file was written successfully with ${mccStores[1].length} records`
+      )
+    );
+
+  // ****************************************************************
+  // **************************** MCC Rest ****************************
+  // ****************************************************************
+  // fix duplicate stores locations
+  let mccRestStoresNoZero = mccRestBranchesInfo.filter(
+    (store) => store.latitude && store.longitude && +store.latitude >= 1 && +store.longitude >= 1
+  );
+  let fixedMccRestStores = correctDuplicateStoresCircle(mccRestStoresNoZero as EnrichedStoreInfo[]);
+
+  // sort by category
+  fixedMccRestStores.sort((a, b) => {
+    const categoryA = (a as any).category || "";
+    const categoryB = (b as any).category || "";
+    if (categoryA < categoryB) {
+      return -1;
+    }
+    if (categoryA > categoryB) {
+      return 1;
+    }
+    return 0;
+  });
+
+  // Only split if there are more than 2000 records
+  if (fixedMccRestStores.length > MAX_GOOGLE_API_LAYER_RECORDS) {
+    // Split to 2 files to avoid more than 2000 records - google api limitation,
+    // Also, stop with changing of the category to make sure a category isn't split between the 2 files
+    let [mccRestStores1, mccRestStores2] = splitStoresByCategory(fixedMccRestStores);
+
+    csvWriterMccRest1
+      .writeRecords(mccRestStores1)
+      .then(() =>
+        console.log(
+          `The Mcc Rest 1 CSV file was written successfully with ${mccRestStores1.length} records`
+        )
+      );
+
+    csvWriterMccRest2
+      .writeRecords(mccRestStores2)
+      .then(() =>
+        console.log(
+          `The Mcc Rest 2 CSV file was written successfully with ${mccRestStores2.length} records`
+        )
+      );
+  } else {
+    // If less than 2000 records, only create mcc_rest1.csv
+    csvWriterMccRest1
+      .writeRecords(fixedMccRestStores)
+      .then(() =>
+        console.log(
+          `The Mcc Rest CSV file was written successfully with ${fixedMccRestStores.length} records`
+        )
+      );
+  }
 }
 
 function manageStoresData(
   dictionary:
     | {
-        [index: string]: Partial<giftcardBranchInfo>[];
-      },
-    // | {
-    //     [index: string]: Partial<mcccardBranchInfo>[];
-    //   },
-  corpsArray: giftcardCorpsInfo[] //| mcccardCorpsInfo[]
+      [index: string]: Partial<giftcardBranchInfo>[];
+    }
+    | {
+      [index: string]: Partial<mcccardBranchInfo>[];
+    },
+  corpsArray: giftcardCorpsInfo[] | mcccardCorpsInfo[]
 ) {
-  let stores: (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>)[] = [];
+  let stores: any[] = [];
 
   // Enrich dictionary with general corp info
   for (let key in dictionary) {
     let corpStores = dictionary[key];
     // check if key matches kevaGeneralCorpsArray company name
-    let generalCorpInfo: giftcardCorpsInfo | undefined = corpsArray.find(
-      (corp: giftcardCorpsInfo) => corp.company === key
+    let generalCorpInfo: giftcardCorpsInfo | mcccardCorpsInfo | undefined = corpsArray.find(
+      (corp: giftcardCorpsInfo | mcccardCorpsInfo) => corp.company === key
     );
 
     if (generalCorpInfo) {
       for (let i = 0; i < corpStores.length; i++) {
-        let store: Partial<giftcardBranchInfo> = corpStores[i];
-        store.company = key;
+        let store: Partial<giftcardBranchInfo> | Partial<mcccardBranchInfo> = corpStores[i];
 
         // enrich store with general corp info
-        let enrichedStoreObject: Partial<giftcardBranchInfo> &
-          Partial<giftcardCorpsInfo> = {
+        let enrichedStoreObject: any = {
           ...store,
+          company: key,
           company_category: generalCorpInfo.company_category,
           website: generalCorpInfo.website,
           is_online: generalCorpInfo.is_online,
@@ -184,7 +264,7 @@ function manageStoresData(
           +enrichedStoreObject.longitude >= 1
         ) {
           stores.push(enrichedStoreObject);
-        } 
+        }
       }
     } else {
       console.log(`No general info for ${key}`);
@@ -215,28 +295,144 @@ function manageStoresData(
   return [stores1, stores2];
 }
 
-type StoresType = Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>;
+// Split stores by category field (for mcc_rest and teamim-like stores)
+function splitStoresByCategory(stores: EnrichedStoreInfo[]): [EnrichedStoreInfo[], EnrichedStoreInfo[]] {
+  let stores1: EnrichedStoreInfo[] = [];
+  let stores2: EnrichedStoreInfo[] = [];
+
+  if (stores.length === 0) {
+    return [stores1, stores2];
+  }
+
+  let itr = 0;
+  let currentCategory = (stores[0] as any).category || "";
+  let categoryStartIndexInStores = 0;
+  let categoryStartIndexInStores1 = 0;
+
+  // Fill stores1 up to the limit, but never split a category
+  while (itr < stores.length) {
+    // Check if we're entering a new category
+    const storeCategory = (stores[itr] as any).category || "";
+    if (storeCategory !== currentCategory) {
+      // We're at the start of a new category
+      // Check if we've already reached the limit
+      if (stores1.length >= MAX_GOOGLE_API_LAYER_RECORDS) {
+        // We've reached the limit, stop here and put the new category in stores2
+        break;
+      }
+
+      // Check how many items are in this new category
+      let newCategoryCount = 0;
+      let checkIndex = itr;
+      while (checkIndex < stores.length &&
+        ((stores[checkIndex] as any).category || "") === storeCategory) {
+        newCategoryCount++;
+        checkIndex++;
+      }
+
+      // If adding this entire new category would exceed the limit, stop stores1 here
+      if (stores1.length + newCategoryCount > MAX_GOOGLE_API_LAYER_RECORDS) {
+        break;
+      }
+
+      // Otherwise, update the category and continue
+      currentCategory = storeCategory;
+      categoryStartIndexInStores = itr;
+      categoryStartIndexInStores1 = stores1.length;
+    }
+
+    // Check if adding this item would exceed the limit
+    if (stores1.length >= MAX_GOOGLE_API_LAYER_RECORDS) {
+      // We've reached the limit while in the middle of a category
+      // Remove all items of the current category from stores1
+      stores1 = stores1.slice(0, categoryStartIndexInStores1);
+      // Reset itr to the start of this category so it goes to stores2
+      itr = categoryStartIndexInStores;
+      break;
+    }
+
+    stores1.push(stores[itr]);
+    itr++;
+  }
+
+  // Fill stores2 with the remaining stores
+  while (itr < stores.length) {
+    if (stores2.length >= MAX_GOOGLE_API_LAYER_RECORDS) {
+      break;
+    }
+    stores2.push(stores[itr]);
+    itr++;
+  }
+
+  return [stores1, stores2];
+}
+
+type StoresType = (Partial<giftcardBranchInfo> & Partial<giftcardCorpsInfo>) | (Partial<mcccardBranchInfo> & Partial<mcccardCorpsInfo>);
 // fill the maximum amount of stores in each file without splitting a category
 function splitStores(stores: StoresType[]): [StoresType[], StoresType[]] {
   let stores1: StoresType[] = [];
   let stores2: StoresType[] = [];
 
-  let itr = 0;
-  let lastCategory = stores[itr].company_category;
+  if (stores.length === 0) {
+    return [stores1, stores2];
+  }
 
+  let itr = 0;
+  let currentCategory = stores[0].company_category;
+  let categoryStartIndexInStores = 0;
+  let categoryStartIndexInStores1 = 0;
+
+  // Fill stores1 up to the limit, but never split a category
   while (itr < stores.length) {
-    if (stores[itr].company_category !== lastCategory) {
-      lastCategory = stores[itr].company_category;
+    // Check if we're entering a new category
+    if (stores[itr].company_category !== currentCategory) {
+      // We're at the start of a new category
+      // Check if we've already reached the limit
+      if (stores1.length >= MAX_GOOGLE_API_LAYER_RECORDS) {
+        // We've reached the limit, stop here and put the new category in stores2
+        break;
+      }
+
+      // Check how many items are in this new category
+      let newCategoryCount = 0;
+      let checkIndex = itr;
+      while (checkIndex < stores.length &&
+        stores[checkIndex].company_category === stores[itr].company_category) {
+        newCategoryCount++;
+        checkIndex++;
+      }
+
+      // If adding this entire new category would exceed the limit, stop stores1 here
+      if (stores1.length + newCategoryCount > MAX_GOOGLE_API_LAYER_RECORDS) {
+        break;
+      }
+
+      // Otherwise, update the category and continue
+      currentCategory = stores[itr].company_category;
+      categoryStartIndexInStores = itr;
+      categoryStartIndexInStores1 = stores1.length;
     }
 
-    if (stores1.length < MAX_GOOGLE_API_LAYER_RECORDS) {
-      stores1.push(stores[itr]);
-    } else if (stores2.length < MAX_GOOGLE_API_LAYER_RECORDS) {
-      stores2.push(stores[itr]);
-    } else {
+    // Check if adding this item would exceed the limit
+    if (stores1.length >= MAX_GOOGLE_API_LAYER_RECORDS) {
+      // We've reached the limit while in the middle of a category
+      // Remove all items of the current category from stores1
+      stores1 = stores1.slice(0, categoryStartIndexInStores1);
+      // Reset itr to the start of this category so it goes to stores2
+      itr = categoryStartIndexInStores;
       break;
     }
 
+    stores1.push(stores[itr]);
+    itr++;
+  }
+
+  // Fill stores2 with the remaining stores
+  while (itr < stores.length) {
+    if (stores2.length >= MAX_GOOGLE_API_LAYER_RECORDS) {
+      break;
+    }
+    stores2.push(stores[itr]);
     itr++;
   }
 
@@ -324,6 +520,10 @@ function updateStoresCoordinates(
   // update the coordinates of the stores
   for (let i = 0; i < storesWithSameCoordinates.length; i++) {
     let store = storesWithSameCoordinates[i];
+
+    if (!store.latitude || !store.longitude) {
+      continue;
+    }
 
     let updatedStore: EnrichedStoreInfo = {
       ...store,
